@@ -1,119 +1,114 @@
-# Full-Stack Coding Challenge
+# Lumaa Full-Stack Coding Challenge
 
-**Deadline**: Sunday, Feb 23th 11:59 pm PST
+## Task management app, with CRUD functionality built  in React + TypeScript
 
----
+### Setup
 
-## Overview
+#### Installation
 
-Create a “Task Management” application with **React + TypeScript** (frontend), **Node.js** (or **Nest.js**) (backend), and **PostgreSQL** (database). The application should:
+Ensure [PostgreSQL](https://www.postgresql.org/download/) is installed and `psql` 
 
-1. **Register** (sign up) and **Log in** (sign in) users.
-2. After logging in, allow users to:
-   - **View a list of tasks**.
-   - **Create a new task**.
-   - **Update an existing task** (e.g., mark complete, edit).
-   - **Delete a task**.
+Create a Database
+1. Open up `psql` in terminal
+    `psql` will prompt with
+    ```
+    Server [localhost]:
+    ```
+    click enter until screen looks like
+    ```
+    Server [localhost]:
+    Database [postgres]:
+    Port [5432]:
+    Usernmae [postgres]:
+    ```
+    These are the default values for a freshly installed postgres, where username should be postgres and after hitting enter, input the password you created during postgres installion
 
-Focus on **correctness**, **functionality**, and **code clarity** rather than visual design.  
-This challenge is intended to be completed within ~3 hours, so keep solutions minimal yet functional.
+2. After create a database
+    ```sql
+    CREATE DATABASE task_app
+    ```
 
----
+3. Connection to database
+    ```sql
+    \c task_app
+    ```
 
-## Requirements
+4. Create Tables
+    ```sql
+    CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(256) UNIQUE NOT NULL,
+        password TEXT NOT NULL
+    );
 
-### 1. Authentication
+    CREATE TABLE tasks (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        title VARCHAR(256) NOT NULL,
+        description TEXT,
+        is_complete BOOLEAN DEFAULT FALSE
+    );
+    ```
 
-- **User Model**:
-  - `id`: Primary key
-  - `username`: Unique string
-  - `password`: Hashed string
-- **Endpoints**:
-  - `POST /auth/register` – Create a new user
-  - `POST /auth/login` – Login user, return a token (e.g., JWT)
-- **Secure the Tasks Routes**: Only authenticated users can perform task operations.  
-  - **Password Hashing**: Use `bcrypt` or another hashing library to store passwords securely.
-  - **Token Verification**: Verify the token (JWT) on each request to protected routes.
 
-### 2. Backend (Node.js or Nest.js)
+### Backend Setup
 
-- **Tasks CRUD**:  
-  - `GET /tasks` – Retrieve a list of tasks (optionally filtered by user).  
-  - `POST /tasks` – Create a new task.  
-  - `PUT /tasks/:id` – Update a task (e.g., mark as complete, edit text).  
-  - `DELETE /tasks/:id` – Delete a task.
-- **Task Model**:
-  - `id`: Primary key
-  - `title`: string
-  - `description`: string (optional)
-  - `isComplete`: boolean (default `false`)
-  - _(Optional)_ `userId` to link tasks to the user who created them
-- **Database**: PostgreSQL
-  - Provide instructions/migrations to set up:
-    - `users` table (with hashed passwords)
-    - `tasks` table
-- **Setup**:
-  - `npm install` to install dependencies
-  - `npm run start` (or `npm run dev`) to run the server
-  - Document any environment variables (e.g., database connection string, JWT secret)
+1. Open up a backend and run
+    ```
+    npm install
+    ```
+    in terminal (if node not installed [download](https://nodejs.org/en))
 
-### 3. Frontend (React + TypeScript)
+2. Now create a ```.env``` file inside backend that will contain database credentials and ports used
+    ```
+    DB_HOST = localhost
+    DB_PORT = 5432 #default port postgres runs on
 
-- **Login / Register**:
-  - Simple forms for **Register** and **Login**.
-  - Store JWT (e.g., in `localStorage`) upon successful login.
-  - If not authenticated, the user should not see the tasks page.
-- **Tasks Page**:
-  - Fetch tasks from `GET /tasks` (including auth token in headers).
-  - Display the list of tasks.
-  - Form to create a new task (`POST /tasks`).
-  - Buttons/fields to update a task (`PUT /tasks/:id`).
-  - Button to delete a task (`DELETE /tasks/:id`).
-- **Navigation**:
-  - Show `Login`/`Register` if not authenticated.
-  - Show `Logout` if authenticated.
-- **Setup**:
-  - `npm install` then `npm start` (or `npm run dev`) to run.
-  - Document how to point the frontend at the backend (e.g., `.env` file, base URL).
+    DB_USER = postgres
+    DB_PASSWORD = your_password
 
----
+    DB_NAME = you_db_name
 
-## Deliverables
+    PORT = 5000 #port back end runs on
+    ```
 
-1. **Fork the Public Repository**: **Fork** this repo into your own GitHub account.
-2. **Implement Your Solution** in the forked repository. Make sure you're README file has:
-   - Steps to set up the database (migrations, environment variables).
-   - How to run the backend.
-   - How to run the frontend.
-   - Any relevant notes on testing.
-   - Salary Expectations per month (Mandatory)
-3. **Short Video Demo**: Provide a link (in a `.md` file in your forked repo) to a brief screen recording showing:
-   - Registering a user
-   - Logging in
-   - Creating, updating, and deleting tasks
-4. **Deadline**: Submissions are due **Sunday, Feb 23th 11:59 pm PST**.
+3. Now run ```npm run dev``` in terminal and should print 
+    ```
+    Server running on port 5000
+    ``` 
+    or whatever port was used in terminal
 
-> **Note**: Please keep your solution minimal. The entire project is intended to be completed in around 3 hours. Focus on core features (registration, login, tasks CRUD) rather than polished UI or extra features.
+4. Backend is setup! ✅
 
----
 
-## Evaluation Criteria
+### Frontend Setup
+1. Open up Frontend directory and once again run  ```npm install``` in terminal
 
-1. **Functionality**  
-   - Does registration and login work correctly (with password hashing)?
-   - Are tasks protected by authentication?
-   - Does the tasks CRUD flow work end-to-end?
+2. Then run ```npm run dev``` in terminal, it should print
+    ```
+      VITE v6.1.0  ready in 1156 ms
 
-2. **Code Quality**  
-   - Is the code structured logically and typed in TypeScript?
-   - Are variable/function names descriptive?
+        ➜  Local:   http://localhost:5173/
+        ➜  Network: use --host to expose
+        ➜  press h + enter to show help
+    ```
+    ctrl + click on the http will get you to the app's frontend page
 
-3. **Clarity**  
-   - Is the `README.md` (in your fork) clear and detailed about setup steps?
-   - Easy to run and test?
+3. Frontend is setup! ✅
 
-4. **Maintainability**  
-   - Organized logic (controllers/services, etc.)
-   - Minimal hard-coded values
 
-Good luck, and we look forward to your submission!
+### Notes
+* To run testing, in backend open terminal and run ```npm run tests``` if any errors restart backend and frontend setup from scratch
+* Ensure PostgreSQL server is running before running ```npm run dev``` in backend
+* To terminate frontend/backend from runnign hit ```ctrl + C``` in terminals running backend/frontend
+
+
+ ### [Video Demo](https://drive.google.com/file/d/1M45Xj6V0iY-x3ZeFPKZE1xbmAFiR1IPw/view?usp=sharing)
+
+
+
+
+
+
+
+
